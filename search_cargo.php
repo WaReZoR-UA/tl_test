@@ -1,5 +1,6 @@
 <?php
-$forms = new ClassForms(get_bloginfo("language"));
+$lng = substr(get_bloginfo('language'), 0, 2)
+$forms = new ClassForms($lng);
 
 function getTable($forms)
 {
@@ -209,17 +210,17 @@ function getTable($forms)
                                     <strong>Тип груза</strong>
                                     <span>' . $cargoTypes[$row["name"]] . '</span>
                                 </div>
-                                <div class="cargo-table_column">
+                                <!--<div class="cargo-table_column">
                                     <strong>Объем/Вес</strong>
                                     <span data-volume="' . $row["volume"] . '">' . $cargoVolume[$row["volume"]] . '</span>
-                                </div>
+                                </div>-->
                                 <div class="cargo-table_column">
                                     <strong>Заказчик</strong>';
 
                                     if($row["comstil_id"] != 0){
-                                        $entry .= '<a href="https://com-stil.com/' . getCargoComstilUrl($row['type']) . $row["comstil_id"] . '" target="_blank">Открыть заявку</a>';
+                                        $entry .= '<a href="https://com-stil.com/' . getCargoComstilUrl($row['type']) . $row["comstil_id"] . '" target="_blank">'. pll__('Открыть заявку') . ' </a>';
                                     } else {
-                                        $entry .= '<a href="javascript:void(0)" onclick="window.open(\''.get_site_url().'/order-cargo-info/?id='.$row['id'].'&t='.$_GET['type'].'&modal-lang=ru\',\'socialPopupWindow\',\'location=no,width=600,height=600,scrollbars=yes,top=100,left=700,resizable = no\')">Открыть заявку</a>';
+                                        $entry .= '<a href="javascript:void(0)" onclick="window.open(\''.get_site_url().'/order-cargo-info/?id='.$row['id'].'&t='.$_GET['type'].'&modal-lang=ru\',\'socialPopupWindow\',\'location=no,width=600,height=600,scrollbars=yes,top=100,left=700,resizable = no\')">  '. pll__('Открыть заявку') . ' </a>';
                                     }
 
                                 $entry .= '</div>
@@ -254,9 +255,9 @@ function getTable($forms)
                                     <strong>Заказчик</strong>';
 
                                     if($row["comstil_id"] != 0){
-                                        $entry .= '<a href="https://com-stil.com/' . getCargoComstilUrl('0') . $row["comstil_id"] . '" target="_blank">Открыть заявку</a>';
+                                        $entry .= '<a href="https://com-stil.com/' . getCargoComstilUrl('0') . $row["comstil_id"] . '" target="_blank">'. pll__('Открыть заявку') . ' </a>';
                                     } else {
-                                        $entry .= '<a href="javascript:void(0)" onclick="window.open(\''.get_site_url().'/order-cargo-info/?id='.$row['id'].'&t='.$_GET['type'].'&modal-lang=ru\',\'socialPopupWindow\',\'location=no,width=600,height=600,scrollbars=yes,top=100,left=700,resizable = no\')">Открыть заявку</a>';
+                                        $entry .= '<a href="javascript:void(0)" onclick="window.open(\''.get_site_url().'/order-cargo-info/?id='.$row['id'].'&t='.$_GET['type'].'&modal-lang=ru\',\'socialPopupWindow\',\'location=no,width=600,height=600,scrollbars=yes,top=100,left=700,resizable = no\')">'. pll__('Открыть заявку') . ' </a>';
                                     }
 
                                 $entry .= '</div>
@@ -281,73 +282,133 @@ $formData = getTable($forms);
         <div class="container">
             <div class="bread-crumbs">
                 <ul>
-                    <li><a href="/">Главная</a></li>
+                    <li><a href="/"><?= pll__('Главная') ?></a></li>
                     <li><?= $post->post_title ?></li>
                 </ul>
             </div>
             <form method="get" id="form_table">
                 <div class="cargo-filters_search">
-                    <div class="cargo-filters_title">Вы в разделе поиска грузов:</div>
+                    <div class="cargo-filters_title"><?= pll__('Вы в разделе поиска грузов:') ?></div>
                     <div class="panel-cost_list wow fadeInDown">
                         <div class="panel-cost_item">
-                            <div class="panel-cost_label">Укажите страну загрузки</div>
+                            <div class="panel-cost_label"><?= pll__('Укажите страну загрузки') ?></div>
                             <select class="" id="export_country_select" name="export">
-                                <option value="">Все страны</option>
+                                <option value=""><?= pll__('Все страны') ?></option>
                                 <?= $forms->getApiData('/wp-admin/admin-ajax.php?action=get-country-list') ?>
                             </select>
                         </div>
                         <div class="panel-cost_item">
-                            <div class="panel-cost_label">Укажите страну разгрузки</div>
+                            <div class="panel-cost_label"><?= pll__('Укажите страну разгрузки') ?></div>
                             <select class="" name="import" id="import_country_select">
-                                <option value="">Все страны</option>
+                                <option value=""><?= pll__('Все страны') ?></option>
                                 <?= $forms->getApiData('/wp-admin/admin-ajax.php?action=get-country-list') ?>
                             </select>
                         </div>
                         <div class="panel-cost_item">
-                            <div class="panel-cost_label">Укажите тип груза</div>
+                            <div class="panel-cost_label"><?= pll__('Укажите тип груза') ?></div>
                             <select onchange="showSelect(this)" name="type">
-                                <option value="">Все типы грузов</option>
-                                <option value="1" <?php if($_GET['type'] == 1): ?> selected <?php endif; ?> >Грузы для автоперевозок</option>
-                                <option value="15" <?php if($_GET['type'] == 15): ?> selected <?php endif; ?> >Грузы для морских перевозок</option>
-                                <option value="44" <?php if($_GET['type'] == 44): ?> selected <?php endif; ?> >Грузы для ж/д перевозок</option>
-                                <option value="43" <?php if($_GET['type'] == 43): ?> selected <?php endif; ?> >Грузы для авиа-перевозок</option>
-                                <option value="5" <?php if($_GET['type'] == 5): ?> selected <?php endif; ?> >Посылки и мелкие грузы</option>
-                                <option value="0" <?php if($_GET['type'] === '0'): ?> selected <?php endif; ?> >Заказы пассажиров</option>
+                                <option value=""><?= pll__('Все типы грузов') ?></option>
+                                <option value="1" <?php if($_GET['type'] == 1): ?> selected <?php endif; ?> ><?php echo esc_html( pll__('Грузы для автоперевозок') ); ?></option>
+								<option value="15" <?php if($_GET['type'] == 15): ?> selected <?php endif; ?> ><?php echo esc_html( pll__('Грузы для морских перевозок') ); ?></option>
+								<option value="44" <?php if($_GET['type'] == 44): ?> selected <?php endif; ?> ><?php echo esc_html( pll__('Грузы для ж/д перевозок') ); ?></option>
+								<option value="43" <?php if($_GET['type'] == 43): ?> selected <?php endif; ?> ><?php echo esc_html( pll__('Грузы для авиа-перевозок') ); ?></option>
+								<option value="5" <?php if($_GET['type'] == 5): ?> selected <?php endif; ?> ><?php echo esc_html( pll__('Сборные грузы') ); ?></option>
+								<option value="0" <?php if($_GET['type'] === '0'): ?> selected <?php endif; ?> ><?php echo esc_html( pll__('Заказы пассажиров') ); ?></option>
+
                             </select>
                         </div>
 
                         <div class="panel-cost_item" id="select_body_type" style="<?php if($_GET['type'] == 1): ?> display: block; <?php else:?> display: none; <?php endif; ?>">
-                            <div class="panel-cost_label">Укажите тип кузова</div>
-                            <select class="" name="type2">
-                                <!--                        --><? //= $forms->getApiData('/wp-admin/admin-ajax.php?action=get-transport-type-list') ?>
-                                <option value="">Все типы кузова</option>
-                                <option value="3" <?php if($_GET['type2'] == 3): ?> selected <?php endif; ?> >Рефрижератор</option>
-                                <option value="19" <?php if($_GET['type2'] == 19): ?> selected <?php endif; ?> >Рефрижератор автопоезд</option>
-                                <option value="4" <?php if($_GET['type2'] == 4): ?> selected <?php endif; ?> >Тентованный автопоезд с прицепом</option>
-                                <option value="2" <?php if($_GET['type2'] == 2): ?> selected <?php endif; ?> >Тентованный полуприцеп</option>
-                                <option value="9" <?php if($_GET['type2'] == 9): ?> selected <?php endif; ?> >Автоперевозка контейнера</option>
-                                <option value="10" <?php if($_GET['type2'] == 10): ?> selected <?php endif; ?> >Изотерм или Цельномет.</option>
-                                <option value="5" <?php if($_GET['type2'] == 5): ?> selected <?php endif; ?> >Мегатрейлер полуприцеп тенованный</option>
-                                <option value="12" <?php if($_GET['type2'] == 12): ?> selected <?php endif; ?> >Перевозки Сборного груза</option>
-                                <option value="20" <?php if($_GET['type2'] == 20): ?> selected <?php endif; ?> >Юмбо тент</option>
-                                <option value="21" <?php if($_GET['type2'] == 21): ?> selected <?php endif; ?> >Юмбо цельномет</option>
-                                <option value="7" <?php if($_GET['type2'] == 7): ?> selected <?php endif; ?> >Автовоз</option>
-                                <option value="23" <?php if($_GET['type2'] == 23): ?> selected <?php endif; ?> >Вешеловоз перевозка одежды</option>
-                                <option value="22" <?php if($_GET['type2'] == 22): ?> selected <?php endif; ?> >Негабарит</option>
-                                <option value="11" <?php if($_GET['type2'] == 11): ?> selected <?php endif; ?> >Перевозки Опасного груза ADR</option>
-                                <option value="8" <?php if($_GET['type2'] == 8): ?> selected <?php endif; ?> >Трейлер трал-платформа</option>
-                                <option value="27" <?php if($_GET['type2'] == 27): ?> selected <?php endif; ?> >Бус грузовой</option>
-                                <option value="28" <?php if($_GET['type2'] == 28): ?> selected <?php endif; ?> >Бус рефрижератор</option>
-                                <option value="26" <?php if($_GET['type2'] == 26): ?> selected <?php endif; ?> >Бус фургон</option>
-                                <option value="13" <?php if($_GET['type2'] == 13): ?> selected <?php endif; ?> >Самосвал</option>
-                                <option value="29" <?php if($_GET['type2'] == 29): ?> selected <?php endif; ?> >Тягач</option>
-                                <option value="45" <?php if($_GET['type2'] == 45): ?> selected <?php endif; ?> >Эвакуатор до 30т.</option>
-                                <option value="32" <?php if($_GET['type2'] == 32): ?> selected <?php endif; ?> >Эвакуатор до 3т.</option>
-                                <option value="37" <?php if($_GET['type2'] == 37): ?> selected <?php endif; ?> >Зерновоз</option>
-                                <option value="35" <?php if($_GET['type2'] == 35): ?> selected <?php endif; ?> >Лесовоз</option>
-                                <option value="14" <?php if($_GET['type2'] == 14): ?> selected <?php endif; ?> >Цистерна, бочка, термос</option>
-                                <option value="16" <?php if($_GET['type2'] == 16): ?> selected <?php endif; ?> >Другой транспорт</option>
-                            </select>
+                            <div class="panel-cost_label"><?php echo esc_html( pll__('Укажите тип кузова') ); ?></div>
+<select class="" name="type2">
+	<?php if ($lng === 'ru'): ?>
+		<option value=""><?php echo esc_html('Все типы кузова'); ?></option>
+        <option value="3" <?php if ($_GET['type2'] == 3): ?>selected<?php endif; ?>><?php echo esc_html('Рефрижератор'); ?></option>
+        <option value="19" <?php if ($_GET['type2'] == 19): ?>selected<?php endif; ?>><?php echo esc_html('Рефрижератор автопоезд'); ?></option>
+        <option value="4" <?php if ($_GET['type2'] == 4): ?>selected<?php endif; ?>><?php echo esc_html('Тентованный автопоезд с прицепом'); ?></option>
+        <option value="2" <?php if ($_GET['type2'] == 2): ?>selected<?php endif; ?>><?php echo esc_html('Тентованный полуприцеп'); ?></option>
+        <option value="9" <?php if ($_GET['type2'] == 9): ?>selected<?php endif; ?>><?php echo esc_html('Автоперевозка контейнера'); ?></option>
+        <option value="10" <?php if ($_GET['type2'] == 10): ?>selected<?php endif; ?>><?php echo esc_html('Изотерм или Цельномет.'); ?></option>
+        <option value="5" <?php if ($_GET['type2'] == 5): ?>selected<?php endif; ?>><?php echo esc_html('Мегатрейлер полуприцеп тентованный'); ?></option>
+        <option value="12" <?php if ($_GET['type2'] == 12): ?>selected<?php endif; ?>><?php echo esc_html('Перевозки Сборного груза'); ?></option>
+        <option value="20" <?php if ($_GET['type2'] == 20): ?>selected<?php endif; ?>><?php echo esc_html('Юмбо тент'); ?></option>
+        <option value="21" <?php if ($_GET['type2'] == 21): ?>selected<?php endif; ?>><?php echo esc_html('Юмбо цельномет'); ?></option>
+        <option value="7" <?php if ($_GET['type2'] == 7): ?>selected<?php endif; ?>><?php echo esc_html('Автовоз'); ?></option>
+        <option value="23" <?php if ($_GET['type2'] == 23): ?>selected<?php endif; ?>><?php echo esc_html('Вешеловоз перевозка одежды'); ?></option>
+        <option value="22" <?php if ($_GET['type2'] == 22): ?>selected<?php endif; ?>><?php echo esc_html('Негабарит'); ?></option>
+        <option value="11" <?php if ($_GET['type2'] == 11): ?>selected<?php endif; ?>><?php echo esc_html('Перевозки Опасного груза ADR'); ?></option>
+        <option value="8" <?php if ($_GET['type2'] == 8): ?>selected<?php endif; ?>><?php echo esc_html('Трейлер трал-платформа'); ?></option>
+        <option value="27" <?php if ($_GET['type2'] == 27): ?>selected<?php endif; ?>><?php echo esc_html('Бус грузовой'); ?></option>
+        <option value="28" <?php if ($_GET['type2'] == 28): ?>selected<?php endif; ?>><?php echo esc_html('Бус рефрижератор'); ?></option>
+        <option value="26" <?php if ($_GET['type2'] == 26): ?>selected<?php endif; ?>><?php echo esc_html('Бус фургон'); ?></option>
+        <option value="13" <?php if ($_GET['type2'] == 13): ?>selected<?php endif; ?>><?php echo esc_html('Самосвал'); ?></option>
+        <option value="29" <?php if ($_GET['type2'] == 29): ?>selected<?php endif; ?>><?php echo esc_html('Тягач'); ?></option>
+        <option value="45" <?php if ($_GET['type2'] == 45): ?>selected<?php endif; ?>><?php echo esc_html('Эвакуатор до 30т.'); ?></option>
+        <option value="32" <?php if ($_GET['type2'] == 32): ?>selected<?php endif; ?>><?php echo esc_html('Эвакуатор до 3т.'); ?></option>
+        <option value="37" <?php if ($_GET['type2'] == 37): ?>selected<?php endif; ?>><?php echo esc_html('Зерновоз'); ?></option>
+        <option value="35" <?php if ($_GET['type2'] == 35): ?>selected<?php endif; ?>><?php echo esc_html('Лесовоз'); ?></option>
+        <option value="14" <?php if ($_GET['type2'] == 14): ?>selected<?php endif; ?>><?php echo esc_html('Цистерна, бочка, термос'); ?></option>
+        <option value="16" <?php if ($_GET['type2'] == 16): ?>selected<?php endif; ?>><?php echo esc_html('Другой транспорт'); ?></option>
+    <?php elseif ($lng === 'en'): ?>
+		<option value=""><?php echo esc_html('All body types'); ?></option>
+        <option value="3" <?php if ($_GET['type2'] == 3): ?>selected<?php endif; ?>><?php echo esc_html('Refrigerator'); ?></option>
+        <option value="19" <?php if ($_GET['type2'] == 19): ?>selected<?php endif; ?>><?php echo esc_html('Refrigerator trailer'); ?></option>
+        <option value="4" <?php if ($_GET['type2'] == 4): ?>selected<?php endif; ?>><?php echo esc_html('Tent truck with trailer'); ?></option>
+        <option value="2" <?php if ($_GET['type2'] == 2): ?>selected<?php endif; ?>><?php echo esc_html('Tent semi-trailer'); ?></option>
+        <option value="9" <?php if ($_GET['type2'] == 9): ?>selected<?php endif; ?>><?php echo esc_html('Container transportation'); ?></option>
+        <option value="10" <?php if ($_GET['type2'] == 10): ?>selected<?php endif; ?>><?php echo esc_html('Isothermal or Full-metal'); ?></option>
+        <option value="5" <?php if ($_GET['type2'] == 5): ?>selected<?php endif; ?>><?php echo esc_html('Megatrailer semi-trailer tent'); ?></option>
+        <option value="12" <?php if ($_GET['type2'] == 12): ?>selected<?php endif; ?>><?php echo esc_html('Consolidated cargo transportation'); ?></option>
+        <option value="20" <?php if ($_GET['type2'] == 20): ?>selected<?php endif; ?>><?php echo esc_html('Jumbo tent'); ?></option>
+        <option value="21" <?php if ($_GET['type2'] == 21): ?>selected<?php endif; ?>><?php echo esc_html('Jumbo full-metal'); ?></option>
+        <option value="7" <?php if ($_GET['type2'] == 7): ?>selected<?php endif; ?>><?php echo esc_html('Car transporter'); ?></option>
+        <option value="23" <?php if ($_GET['type2'] == 23): ?>selected<?php endif; ?>><?php echo esc_html('Clothes transporter'); ?></option>
+        <option value="22" <?php if ($_GET['type2'] == 22): ?>selected<?php endif; ?>><?php echo esc_html('Oversized cargo'); ?></option>
+        <option value="11" <?php if ($_GET['type2'] == 11): ?>selected<?php endif; ?>><?php echo esc_html('ADR Dangerous Goods Transportation'); ?></option>
+        <option value="8" <?php if ($_GET['type2'] == 8): ?>selected<?php endif; ?>><?php echo esc_html('Trailer platform'); ?></option>
+        <option value="27" <?php if ($_GET['type2'] == 27): ?>selected<?php endif; ?>><?php echo esc_html('Cargo van'); ?></option>
+        <option value="28" <?php if ($_GET['type2'] == 28): ?>selected<?php endif; ?>><?php echo esc_html('Refrigerated van'); ?></option>
+        <option value="26" <?php if ($_GET['type2'] == 26): ?>selected<?php endif; ?>><?php echo esc_html('Van'); ?></option>
+        <option value="13" <?php if ($_GET['type2'] == 13): ?>selected<?php endif; ?>><?php echo esc_html('Dump truck'); ?></option>
+        <option value="29" <?php if ($_GET['type2'] == 29): ?>selected<?php endif; ?>><?php echo esc_html('Tractor unit'); ?></option>
+        <option value="45" <?php if ($_GET['type2'] == 45): ?>selected<?php endif; ?>><?php echo esc_html('Evacuator up to 30 tons'); ?></option>
+        <option value="32" <?php if ($_GET['type2'] == 32): ?>selected<?php endif; ?>><?php echo esc_html('Evacuator up to 3 tons'); ?></option>
+        <option value="37" <?php if ($_GET['type2'] == 37): ?>selected<?php endif; ?>><?php echo esc_html('Grain truck'); ?></option>
+        <option value="35" <?php if ($_GET['type2'] == 35): ?>selected<?php endif; ?>><?php echo esc_html('Timber truck'); ?></option>
+        <option value="14" <?php if ($_GET['type2'] == 14): ?>selected<?php endif; ?>><?php echo esc_html('Tank, barrel, thermos'); ?></option>
+        <option value="16" <?php if ($_GET['type2'] == 16): ?>selected<?php endif; ?>><?php echo esc_html('Other transport'); ?></option>
+        <?php elseif ($lng === 'ro'): ?>
+			<option value=""><?php echo esc_html('Toate tipurile de corp'); ?></option>
+			<option value="3" <?php if ($_GET['type2'] == 3): ?>selected<?php endif; ?>><?php echo esc_html('Frigorific'); ?></option>
+			<option value="19" <?php if ($_GET['type2'] == 19): ?>selected<?php endif; ?>><?php echo esc_html('Remorcă frigorifică'); ?></option>
+			<option value="4" <?php if ($_GET['type2'] == 4): ?>selected<?php endif; ?>><?php echo esc_html('Camion cu prelată și remorcă'); ?></option>
+			<option value="2" <?php if ($_GET['type2'] == 2): ?>selected<?php endif; ?>><?php echo esc_html('Semiremorcă cu prelată'); ?></option>
+			<option value="9" <?php if ($_GET['type2'] == 9): ?>selected<?php endif; ?>><?php echo esc_html('Transport containere'); ?></option>
+			<option value="10" <?php if ($_GET['type2'] == 10): ?>selected<?php endif; ?>><?php echo esc_html('Izoterm sau complet metalic'); ?></option>
+			<option value="5" <?php if ($_GET['type2'] == 5): ?>selected<?php endif; ?>><?php echo esc_html('Remorcă mega prelată'); ?></option>
+			<option value="12" <?php if ($_GET['type2'] == 12): ?>selected<?php endif; ?>><?php echo esc_html('Transport consolidat de marfă'); ?></option>
+			<option value="20" <?php if ($_GET['type2'] == 20): ?>selected<?php endif; ?>><?php echo esc_html('Remorcă jumbo cu prelată'); ?></option>
+			<option value="21" <?php if ($_GET['type2'] == 21): ?>selected<?php endif; ?>><?php echo esc_html('Remorcă jumbo complet metalică'); ?></option>
+			<option value="7" <?php if ($_GET['type2'] == 7): ?>selected<?php endif; ?>><?php echo esc_html('Transport auto'); ?></option>
+			<option value="23" <?php if ($_GET['type2'] == 23): ?>selected<?php endif; ?>><?php echo esc_html('Transport îmbrăcăminte'); ?></option>
+			<option value="22" <?php if ($_GET['type2'] == 22): ?>selected<?php endif; ?>><?php echo esc_html('Transport mărfuri murdare'); ?></option>
+			<option value="11" <?php if ($_GET['type2'] == 11): ?>selected<?php endif; ?>><?php echo esc_html('Transport mărfuri periculoase ADR'); ?></option>
+			<option value="8" <?php if ($_GET['type2'] == 8): ?>selected<?php endif; ?>><?php echo esc_html('Platformă pentru remorcă'); ?></option>
+			<option value="27" <?php if ($_GET['type2'] == 27): ?>selected<?php endif; ?>><?php echo esc_html('Microbuz marfă'); ?></option>
+			<option value="28" <?php if ($_GET['type2'] == 28): ?>selected<?php endif; ?>><?php echo esc_html('Microbuz frigorific'); ?></option>
+			<option value="26" <?php if ($_GET['type2'] == 26): ?>selected<?php endif; ?>><?php echo esc_html('Microbuz'); ?></option>
+			<option value="13" <?php if ($_GET['type2'] == 13): ?>selected<?php endif; ?>><?php echo esc_html('Macara'); ?></option>
+			<option value="29" <?php if ($_GET['type2'] == 29): ?>selected<?php endif; ?>><?php echo esc_html('Tren de camioane'); ?></option>
+			<option value="45" <?php if ($_GET['type2'] == 45): ?>selected<?php endif; ?>><?php echo esc_html('Remorcher până la 30 de tone'); ?></option>
+			<option value="32" <?php if ($_GET['type2'] == 32): ?>selected<?php endif; ?>><?php echo esc_html('Remorcher până la 3 tone'); ?></option>
+			<option value="37" <?php if ($_GET['type2'] == 37): ?>selected<?php endif; ?>><?php echo esc_html('Camion pentru cereale'); ?></option>
+			<option value="35" <?php if ($_GET['type2'] == 35): ?>selected<?php endif; ?>><?php echo esc_html('Camion pentru lemn'); ?></option>
+			<option value="14" <?php if ($_GET['type2'] == 14): ?>selected<?php endif; ?>><?php echo esc_html('Recipient, butoi, termos'); ?></option>
+			<option value="16" <?php if ($_GET['type2'] == 16): ?>selected<?php endif; ?>><?php echo esc_html('Altă transportare'); ?></option>
+		<?php endif; ?>
+</select>
+
+
                         </div>
 
                         <div class="panel-cost_item" id="select_cargo_type" style="<?php if($_GET['type'] == 5): ?> display: block; <?php else:?> display: none; <?php endif; ?>">
@@ -382,7 +443,7 @@ $formData = getTable($forms);
 
                         <div class="panel-cost_item">
                             <button class="panel-cost_submit main-btn" type="submit"
-                                    onclick="document.getElementById('form_table').submit()">Поиск
+                                    onclick="document.getElementById('form_table').submit()"><?= pll__('Поиск') ?>
                             </button>
                         </div>
                     </div>
@@ -439,23 +500,24 @@ $formData = getTable($forms);
         $fType = $_GET['type'] ?? null;
 
         $types = [
-                '1' => 'Грузы для автоперевозок',
-                '15' => 'Грузы для морских перевозок',
-                '44' => 'Грузы для ж/д перевозок',
-                '43' => 'Грузы для авиа-перевозок',
-                '5' => 'Посылки и мелкие грузы',
-                '0' => 'Заказы пассажиров'
-        ];
+			'1' => pll__('Грузы для автоперевозок'),
+			'15' => pll__('Грузы для морских перевозок'),
+			'44' => pll__('Грузы для ж/д перевозок'),
+			'43' => pll__('Грузы для авиа-перевозок'),
+			'5' => pll__('Сборные грузы'),
+			'0' => pll__('Заказы пассажиров')
+		];
+
     ?>
 
     <?php if($fExport && !$fImport):?>
-        <span>Заявки по грузам. <?= $types[$fType] ?? 'Все типы грузов' ?> в направлении из <?=  $formData['countries'][$fExport]['name_from'] ?> найдено предложений <?= $formData['count'] ?></span>
+        <span><?= pll__('Заявки по грузам.') ?> <?= $types[$fType] ?? pll__('Все типы грузов') ?> <?= pll__('в направлении из') ?> <?=  $formData['countries'][$fExport]['name_from'] ?> <?= pll__('найдено предложений') ?> <?= $formData['count'] ?></span>
     <?php elseif($fImport && !$fExport):?>
-        <span>Заявки по грузам. <?= $types[$fType] ?? 'Все типы грузов' ?> в направлении в <?=  $formData['countries'][$fImport]['name_to'] ?> найдено предложений <?= $formData['count'] ?></span>
+        <span><?= pll__('Заявки по грузам.') ?> <?= $types[$fType] ?? pll__('Все типы грузов') ?> <?= pll__('в направлении в') ?> <?=  $formData['countries'][$fImport]['name_to'] ?> <?= pll__('найдено предложений') ?> <?= $formData['count'] ?></span>
     <?php elseif($fImport && $fExport):?>
-        <span>Заявки по грузам. <?= $types[$fType] ?? 'Все типы грузов' ?> в направлении из <?=  $formData['countries'][$fExport]['name_from'] ?> в <?=  $formData['countries'][$fImport]['name_to'] ?> найдено предложений <?= $formData['count'] ?></span>
+        <span><?= pll__('Заявки по грузам.') ?> <?= $types[$fType] ?? pll__('Все типы грузов') ?> <?= pll__('в направлении из') ?> <?=  $formData['countries'][$fExport]['name_from'] ?> <?= pll__('в') ?> <?=  $formData['countries'][$fImport]['name_to'] ?> <?= pll__('найдено предложений') ?> <?= $formData['count'] ?></span>
     <?php else: ?>
-        <span>Заявки по грузам. <?= $types[$fType] ?? 'Все типы грузов' ?> найдено предложений <?= $formData['count'] ?></span>
+        <span><?= pll__('Заявки по грузам.') ?> <?= $types[$fType] ?? pll__('Все типы грузов') ?> <?= pll__('найдено предложений') ?> <?= $formData['count'] ?></span>
     <?php endif;?>
 </div>
 
@@ -463,15 +525,13 @@ $formData = getTable($forms);
     <div class="cargo-table fixed_block_position" style="width: 1903px; height: 86px;">
         <div class="cargo-table_row head fixed_block absolute">
             <div class="container">
-                <div class="cargo-table_column">Место погрузки</div>
-                <div class="cargo-table_column">Место разгрузки</div>
-                <div class="cargo-table_column">Дата
-                    погрузки
-                </div>
-                <div class="cargo-table_column">Тип транспорта</div>
-                <div class="cargo-table_column">Тип груза</div>
-                <div class="cargo-table_column">Объем/Вес</div>
-                <div class="cargo-table_column">Заказчик</div>
+                <div class="cargo-table_column"><?= pll__('Место погрузки') ?></div>
+                <div class="cargo-table_column"><?= pll__('Место разгрузки') ?></div>
+                <div class="cargo-table_column"><?= pll__('Дата погрузки') ?></div>
+                <div class="cargo-table_column"><?= pll__('Тип транспорта') ?></div>
+                <div class="cargo-table_column"><?= pll__('Тип груза') ?></div>
+<!--                <div class="cargo-table_column">Объем/Вес</div>-->
+                <div class="cargo-table_column"><?= pll__('Заказчик') ?></div>
             </div>
         </div>
         <?= $formData['entry']; ?>
@@ -480,13 +540,12 @@ $formData = getTable($forms);
     <div class="cargo-table fixed_block_position" style="width: 1903px; height: 86px;">
         <div class="cargo-table_row head fixed_block absolute">
             <div class="container">
-                <div class="cargo-table_column">Откуда</div>
-                <div class="cargo-table_column">Куда</div>
-                <div class="cargo-table_column">Дата отправки
-                </div>
-                <div class="cargo-table_column">Тип транспорта</div>
-                <div class="cargo-table_column">Кол-во пассажиров</div>
-                <div class="cargo-table_column">Заказчик</div>
+                <div class="cargo-table_column"><?= pll__('Откуда') ?></div>
+                <div class="cargo-table_column"><?= pll__('Куда') ?></div>
+                <div class="cargo-table_column"><?= pll__('Дата отправки') ?></div>
+                <div class="cargo-table_column"><?= pll__('Тип транспорта') ?></div>
+                <div class="cargo-table_column"><?= pll__('Кол-во пассажиров') ?></div>
+                <div class="cargo-table_column"><?= pll__('Заказчик') ?></div>
             </div>
         </div>
         <?= $formData['entry']; ?>
